@@ -1,6 +1,6 @@
-$losy=@( 0,0,0,0,0,0,0,0,0,0 )
-$historia=@(0,0,0,0,0,0,0,0,0,0 )
-$inc=-1 
+﻿ 
+############################################################################
+#---------- Funkcja sparwdzająca jakość losowań -------------
 
 function Search-Sequential([array]$arr, $item, [switch]$firstfound)
 {
@@ -19,51 +19,63 @@ function Search-Sequential([array]$arr, $item, [switch]$firstfound)
     }
     return $found
 }
+
 ############################################################################
-#---------- Funkcja pobierająca wartść przyciśnietego klawisza -------------
+#---------- Funkcja losująca -------------
 Function LosujLiczbe  
 { 
-  param ( [int]$min , [int]$max  )
   
-   #$losy=@( 0,0,0,0,0,0,0,0,0,0 )
-   
-  Write-host $los
+  param ( [int]$min , [int]$max ,[int]$inc )
+  CLS
+  Write-Host "Funkcja inc ---> "$inc -ForegroundColor red
+  Write-Host "Funkcja historia ------> $historia " -ForegroundColor green 
+  Write-Host "Funkcja losy ------> $losy " -ForegroundColor green 
+  
   For ($z=0 ; $z -lt 10 ; $z++)
   {
-    $losy[$z]=Get-Random -Minimum $min -Maximum $max
-    Write-host $z" kolejka wylosowano" $losy   }
-  
-  Write-host $losy
-  $los= $losy |Get-Random
-  Write-host $los
-   
-  return $los 
+     $losy[$z]=Get-Random -Minimum $min -Maximum $max
+     Write-host $z" kolejka wylosowano" $losy -ForegroundColor yellow 
+  }
+   # IF ( $losy[$z] -eq $losy[$z-1] )             { $losy[$z]=Get-Random -Minimum $min -Maximum $max }
+   # IF ( $z -gt 1 -and $losy[$z] -eq $losy[$z-2] ) { $losy[$z]=Get-Random -Minimum $min -Maximum $max }
+   # IF ( $z -gt 2 -and $losy[$z] -eq $losy[$z-3] ) { $losy[$z]=Get-Random -Minimum $min -Maximum $max }
+   $los= $losy |Get-Random
+   Write-host "funkcja losująca wylosowano-->"$los -ForegroundColor red
+   $historia[$inc]=$los
+   Write-Host "Funkcja inc ---> "$inc -ForegroundColor red
+   return $los 
 } 
 
+CLS
+$losy=@( 0,0,0,0,0,0,0,0,0,0 )
+$historia=@(0,0,0,0,0,0,0,0,0,0 )
+$inc=-1
+Write-Host "losy ------> $losy " -ForegroundColor cyan
 For (;;)
 
 { 
 
-$min=read-host -Prompt "min ?"
-$max=read-host -Prompt "max ?"
-$liczba=LosujLiczbe $min $max
-Write-Host "wylosowano ----> $liczba" 
-Write-Host "historia" $historia
+$min=read-host -Prompt "min ?" # Pobranie 1 liczby
+$max=read-host -Prompt "max ?" # Pobranie 2 liczby
+#-----------------------------------
+Write-Host "inc "$inc -ForegroundColor red 
+Write-Host "wylosowano ----> $liczba " -ForegroundColor red 
+Write-Host "historia ------> $historia " -ForegroundColor green
+Write-Host "losy ------> $losy " -ForegroundColor cyan
 $inc++
-Write-Host " inc "$inc
-IF( $inc -gt 9) {$inc=0}
-$historia[$inc]=$liczba
-Write-Host "wylosowano $liczba" 
-Write-Host "losy" $losy
+IF( $inc -gt 9) {$inc=0 ; $losy=@( 0,0,0,0,0,0,0,0,0,0 ) }
 Do
 {
-$liczba=LosujLiczbe $min $max
-$aaa=Search-Sequential -arr $historia -item $liczba
-Write-Host "aaa0 " $aaa[0] "aaa1 " $aaa[1] 
+Write-Host "inc "$inc -ForegroundColor red 
+$liczba=LosujLiczbe $min $max $inc
+$sprawdzenie=Search-Sequential -arr $historia -item $liczba
 }
-UNTIL( $aaa[1] -eq $null) 
-$historia[$inc]=$liczba
-Write-Host "nie znaleziono"
-Write-Host "Ostatecznie wylosowano $liczba"
-Write-Host "historia" $historia
+UNTIL( $sprawdzenie[1] -eq $null)
+
+Write-Host "inc "$inc -ForegroundColor red 
+ 
+Write-Host "inc "$inc -ForegroundColor red 
+#$historia[$inc]=$liczba
+Write-Host "Ostatecznie wylosowano $liczba" -ForegroundColor red
+Write-Host "historia" $historia -ForegroundColor cyan
 }
